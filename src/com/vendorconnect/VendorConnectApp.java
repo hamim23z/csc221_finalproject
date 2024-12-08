@@ -11,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 public class VendorConnectApp extends Application {
@@ -24,37 +25,6 @@ public class VendorConnectApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;  // Set primaryStage for scene switching
 
-        // Create the navbar (HBox) and set it on the top
-        HBox navbar = new HBox(20); // 20px spacing between items
-        navbar.setAlignment(Pos.CENTER_LEFT);
-        navbar.setStyle("-fx-background-color: #333; -fx-padding: 10px;");
-
-        // Logo (VendorConnect) on the left with click event to go to homepage
-        Text logoText = new Text("VendorConnect");
-        logoText.setFont(new Font(24));  // Set font size
-        logoText.setStyle("-fx-fill: white; -fx-font-weight: bold;");  // Make text bold and white
-        logoText.setOnMouseClicked((MouseEvent e) -> {
-            primaryStage.setScene(createHomeScene());  // Redirect to the home scene
-        });
-        navbar.getChildren().add(logoText);
-
-        // Spacer to push the labels all the way to the right
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-
-        // Create labels for "Read More", "About Us", and "Login"
-        Label readMoreLabel = createNavLink("Read More");
-        Label aboutUsLabel = createNavLink("About Us");
-        Label loginLabel = createNavLink("Login");
-
-        // Add the labels to the right-side HBox
-        HBox rightSide = new HBox(20);  // Horizontal box for right-side links
-        rightSide.setAlignment(Pos.CENTER_RIGHT);
-        rightSide.getChildren().addAll(readMoreLabel, aboutUsLabel, loginLabel);
-
-        // Add the spacer and right-side labels to the navbar
-        navbar.getChildren().addAll(spacer, rightSide);
-
         // Fullscreen configuration for the stage
         primaryStage.setFullScreen(true);
 
@@ -65,10 +35,61 @@ public class VendorConnectApp extends Application {
         primaryStage.show();
     }
 
-    // Helper method to create a scene for the home page
+    // Helper method to create a scene for the home page with Google Maps
     private Scene createHomeScene() {
         StackPane homeContent = new StackPane();
-        homeContent.getChildren().add(new Text("Welcome to the Home Page"));
+
+        // Create a WebView to display Google Maps
+        WebView mapView = new WebView();
+        mapView.setPrefSize(800, 600);  // Set the preferred size of the WebView
+
+        // Enable JavaScript for the WebView
+        mapView.getEngine().setJavaScriptEnabled(true);
+
+        String htmlContent = """
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Vendor Connect Map</title>
+            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANf8poiTzVJfj46o2o1Yf_4YsEg4WV8m8&callback=initMap" async defer></script>
+            <style>
+              html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+              }
+              #map {
+                height: 100%;
+                width: 100%;
+              }
+            </style>
+          </head>
+          <body>
+            <div id="map"></div>
+            <script>
+              function initMap() {
+                // New York City coordinates
+                const location = { lat: 40.7128, lng: -74.0060 };
+                const map = new google.maps.Map(document.getElementById('map'), {
+                  center: location,
+                  zoom: 12,
+                  mapTypeId: 'roadmap'
+                });
+                
+                // Add a marker
+                new google.maps.Marker({
+                  position: location,
+                  map: map,
+                  title: 'New York City'
+                });
+              }
+            </script>
+          </body>
+        </html>
+        """;
+
+        mapView.getEngine().loadContent(htmlContent);  // Load the Google Maps HTML content
+        homeContent.getChildren().add(mapView);  // Add the WebView to the StackPane
 
         // Layout (VBox to stack navbar on top and main content below)
         VBox layout = new VBox();
