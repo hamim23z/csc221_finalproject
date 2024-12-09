@@ -13,6 +13,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class VendorConnectApp extends Application {
@@ -180,15 +182,69 @@ public class VendorConnectApp extends Application {
 
     // Helper method to create a scene for the "About Us" page
     private Scene createAboutUsScene() {
-        StackPane aboutUsContent = new StackPane();
-        aboutUsContent.getChildren().add(new Text("Welcome to the About Us Page"));
+        // Use ScrollPane to handle overflow
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
 
-        // Layout (VBox to stack navbar on top and main content below)
-        VBox layout = new VBox();
-        layout.getChildren().addAll(createNavbar(), aboutUsContent);
+        // Create a VBox to hold the content
+        VBox layout = new VBox(10);
+        layout.setStyle("-fx-background-color: #f0f4f8; -fx-padding: 20px;");
 
-        return new Scene(layout, 800, 600);  // Initial scene size
+        // About Us content (4 paragraphs)
+        Text aboutUsText = new Text(
+            "At VendorConnect, we believe in making connections between businesses and their customers in the easiest way possible. " +
+            "Our platform brings local vendors and their customers closer, helping businesses grow by making it simple for potential customers " +
+            "to find services and products near them. Whether you're a small business owner or a large enterprise, VendorConnect provides the tools " +
+            "necessary to gain visibility and increase your customer base.\n\n" +
+            
+            "The idea for VendorConnect stemmed from the desire to simplify the process of finding vendors in your area. Often, people spend a " +
+            "significant amount of time searching for local vendors and services, but with VendorConnect, you can quickly locate a variety of " +
+            "options right at your fingertips. The platform is designed to be simple to use, making it easy for anyone to navigate, whether you're " +
+            "a business owner or a customer.\n\n" +
+            
+            "We strive to create a positive experience for both vendors and customers. Vendors can easily add their businesses to the map, " +
+            "ensuring that customers know where to find them. For customers, the platform provides the convenience of exploring different " +
+            "vendors, reading reviews, and making informed decisions based on their needs. The map interface allows for seamless interaction, " +
+            "allowing you to zoom in on specific areas and discover new vendors with ease.\n\n" +
+            
+            "As we continue to expand, our goal is to build a strong community of vendors and customers who can interact and grow together. " +
+            "We're committed to improving the platform, enhancing the user experience, and helping businesses thrive. VendorConnect is here to " +
+            "support businesses of all sizes, giving them the tools they need to succeed in a highly competitive market."
+        );
+
+        // Set a comprehensive style in a single call
+        aboutUsText.setStyle(
+            "-fx-font-size: 18px;" +
+            "-fx-fill: #333333;" +
+            "-fx-font-family: Arial, sans-serif;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: #2980b9;" +
+            "-fx-padding: 30px;"
+        );
+
+        // Set wrapping width dynamically
+        aboutUsText.wrappingWidthProperty().bind(scrollPane.widthProperty().subtract(60));
+
+        // Add the About Us text to the layout
+        layout.getChildren().addAll(createNavbar(), aboutUsText);
+
+        // Add an image to the bottom of the screen
+        Image image = new Image("https://via.placeholder.com/800x200.png?text=Your+Image+Here");  // Example image URL
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(800);  // Set the width to fill the screen
+        imageView.setPreserveRatio(true);  // Maintain aspect ratio of the image
+        layout.getChildren().add(imageView);  // Add the image to the layout
+
+        // Set content of ScrollPane
+        scrollPane.setContent(layout);
+
+        // Create scene
+        Scene scene = new Scene(scrollPane, 800, 600);
+
+        return scene;
     }
+
 
     // Helper method to create a scene for the "Login" page
     private Scene createLoginScene() {
